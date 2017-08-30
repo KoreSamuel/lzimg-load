@@ -7,6 +7,8 @@ window.lzimg = (function(window, document) {
         this.listen();
     };
 
+    var imgList = [];
+
     Lzimg.prototype = {
         init: function() {
             imgList.push(this.ele);
@@ -21,11 +23,10 @@ window.lzimg = (function(window, document) {
         }
     };
 
-    var imgList = [];
 
     var intoViewer = function(ele) {
         var pos = ele.getBoundingClientRect();
-        return pos.top <= window.innerHeight;
+        return ((pos.top >= 0 && pos.left >= 0 && pos.top) <= (window.innerHeight || document.documentElement.clientHeight));
     };
 
     var replaceSrc = function(img, cb) {
@@ -40,11 +41,13 @@ window.lzimg = (function(window, document) {
     };
 
     var lzImages = function() {
-        for (var i = 0, len = imgList.length; i < len; i++) {
+        for (var i = 0; i < imgList.length; ) {
             var cur = imgList[i];
             if (intoViewer(cur)) {
                 replaceSrc(cur, removeLoaded(cur, i));
+                continue;
             }
+            i++;
         }
     };
 
